@@ -1,0 +1,23 @@
+{
+  "name": "com.dave6.third-person-camera",
+  "version": "0.0.1",
+  "displayName": "Dave Third Person Camera",
+  "description": "A lightweight third person camera system for Unity.",
+  "unity": "6000.0",
+  "unityRelease": "0",
+  "documentationUrl": "https://github.com/David-63/com.dave6.third-person-camera#readme",
+  "changelogUrl": "https://github.com/David-63/com.dave6.third-person-camera/releases",
+  "licensesUrl": "https://github.com/David-63/com.dave6.third-person-camera/blob/main/LICENSE",
+  "keywords": [
+    "camera-controller",
+    "moduler"
+  ],
+  "author": {
+    "name": "David-63",
+    "email": "jiseop.63@gmail.com",
+    "url": "https://github.com/David-63"
+  },
+  "dependencies": {
+    "com.unity.cinemachine": "3.1.5"
+  }
+}

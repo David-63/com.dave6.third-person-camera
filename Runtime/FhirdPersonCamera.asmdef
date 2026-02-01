@@ -1,0 +1,17 @@
+{
+    "name": "FhirdPersonCamera",
+    "rootNamespace": "Dave6.FhirdPersonCamera",
+    "references": [
+        "GUID:4307f53044263cf4b835bd812fc161a4",
+        "GUID:afed0d0877f31784d88e20e1da31e6eb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
