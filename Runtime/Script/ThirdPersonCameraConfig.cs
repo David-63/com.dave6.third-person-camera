@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Dave6.ThirdPersonCamera
 {
-    [CreateAssetMenu(fileName = "ThirdPersonCameraConfig", menuName = "DaveAssets/Config/Camera/Third Person Camera Config")]
+    [CreateAssetMenu(fileName = "ThirdPersonCameraConfig", menuName = "DaveAssets/Camera/Third Person Camera Config")]
     public class ThirdPersonCameraConfig : ScriptableObject
     {
         [Header("Camera Settings")]

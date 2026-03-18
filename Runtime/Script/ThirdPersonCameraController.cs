@@ -8,26 +8,26 @@ namespace Dave6.ThirdPersonCamera
 {
     public class ThirdPersonCameraController : MonoBehaviour, ICameraOutput
     {
-        public ThirdPersonCameraContext cameraCtx;
-        Transform m_MainCamera;
-        public float referenceYaw => cameraCtx.aimYaw;
-        public Vector3 cameraForward => m_MainCamera.forward;
+        public ThirdPersonCameraContext CameraCtx;
+        Transform _MainCamera;
+        public float ReferenceYaw => CameraCtx.AimYaw;
+        public Vector3 CameraForward => _MainCamera.forward;
 
-        CinemachineCamera m_CinemachineCamera;
-        CinemachineThirdPersonFollow m_ThirdPersonFollow;
-        Transform m_CameraTarget;
+        CinemachineCamera _CinemachineCamera;
+        CinemachineThirdPersonFollow _ThirdPersonFollow;
+        Transform _CameraTarget;
 
         [Header("설정")]
-        [SerializeField] ThirdPersonCameraConfig m_Config;
+        [SerializeField] ThirdPersonCameraConfig _Config;
 
 
         [Header("트렌지션 효과")]
-        [SerializeField] float m_TransitionDuration = 0.35f;
-        [SerializeField] AnimationCurve m_TransitionCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-        Coroutine m_TransitionCoroutine;
+        [SerializeField] float _TransitionDuration = 0.35f;
+        [SerializeField] AnimationCurve _TransitionCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        Coroutine _TransitionCoroutine;
 
-        List<CameraKick> m_Kicks = new();
-        CameraSway m_Sway = new(0,0);
+        List<CameraKick> _Kicks = new();
+        CameraSway _Sway = new(0,0);
 
         void Awake()
         {
@@ -43,112 +43,112 @@ namespace Dave6.ThirdPersonCamera
 
         void LateUpdate()
         {
-            if (m_CameraTarget == null) return;
+            if (_CameraTarget == null) return;
 
-            cameraCtx.finalYaw = cameraCtx.aimYaw + cameraCtx.swayYaw;
-            cameraCtx.finalPitch = cameraCtx.aimPitch + cameraCtx.swayPitch;
+            CameraCtx.FinalYaw = CameraCtx.AimYaw + CameraCtx.SwayYaw;
+            CameraCtx.FinalPitch = CameraCtx.AimPitch + CameraCtx.SwayPitch;
 
-            m_CameraTarget.rotation = Quaternion.Euler(cameraCtx.finalPitch, cameraCtx.finalYaw, 0.0f);
+            _CameraTarget.rotation = Quaternion.Euler(CameraCtx.FinalPitch, CameraCtx.FinalYaw, 0.0f);
         }
 
         void Initialize()
         {
-            cameraCtx = new();
+            CameraCtx = new();
             var cam = Camera.main;
             if (cam == null)
             {
                 Debug.LogError("MainCamera not found.");
                 enabled = false;
             }
-            m_MainCamera = cam.transform;
+            _MainCamera = cam.transform;
             Camera.main.gameObject.GetOrAddComponent<CinemachineBrain>();
 
-            m_CinemachineCamera = gameObject.GetOrAddComponent<CinemachineCamera>();
-            m_ThirdPersonFollow = gameObject.GetOrAddComponent<CinemachineThirdPersonFollow>();
+            _CinemachineCamera = gameObject.GetOrAddComponent<CinemachineCamera>();
+            _ThirdPersonFollow = gameObject.GetOrAddComponent<CinemachineThirdPersonFollow>();
         }
 
         void UpdateShake(float deltaTime)
         {
-            cameraCtx.kickYaw = 0f;
-            cameraCtx.kickPitch = 0f;
+            CameraCtx.KickYaw = 0f;
+            CameraCtx.KickPitch = 0f;
 
-            for (int i = m_Kicks.Count - 1; i >= 0; i--)
+            for (int i = _Kicks.Count - 1; i >= 0; i--)
             {
-                var kick = m_Kicks[i];
+                var kick = _Kicks[i];
                 kick.UpdateShake(deltaTime, out float yawOffset, out float pitchOffset);
-                cameraCtx.kickYaw += yawOffset;
-                cameraCtx.kickPitch += pitchOffset;
+                CameraCtx.KickYaw += yawOffset;
+                CameraCtx.KickPitch += pitchOffset;
 
                 if (kick.isFinished)
                 {
-                    m_Kicks.RemoveAt(i);
+                    _Kicks.RemoveAt(i);
                 }
             }
 
-            m_Sway.UpdateShake(deltaTime, out cameraCtx.swayYaw, out cameraCtx.swayPitch, cameraCtx.moveSpeed01);
+            _Sway.UpdateShake(deltaTime, out CameraCtx.SwayYaw, out CameraCtx.SwayPitch, CameraCtx.MoveSpeed01);
         }
 
         void UpdateAim()
         {
-            cameraCtx.aimYaw = cameraCtx.inputYaw + cameraCtx.kickYaw;
-            cameraCtx.aimPitch = cameraCtx.inputPitch + cameraCtx.kickPitch;
+            CameraCtx.AimYaw = CameraCtx.InputYaw + CameraCtx.KickYaw;
+            CameraCtx.AimPitch = CameraCtx.InputPitch + CameraCtx.KickPitch;
         }
 
         #region Camera API
         public void SetFollowTarget(Transform target)
         {
-            m_CameraTarget = target;
-            m_CinemachineCamera.Follow = m_CameraTarget;
+            _CameraTarget = target;
+            _CinemachineCamera.Follow = _CameraTarget;
 
-            m_ThirdPersonFollow.Damping = Vector3.zero;
-            m_ThirdPersonFollow.ShoulderOffset = new Vector3(1,0,0);
-            m_ThirdPersonFollow.VerticalArmLength = 0;
-            m_ThirdPersonFollow.CameraDistance = 1;
-            m_ThirdPersonFollow.AvoidObstacles.Enabled = true;
-            m_ThirdPersonFollow.AvoidObstacles.DampingFromCollision = 0.2f;
-            m_ThirdPersonFollow.AvoidObstacles.DampingIntoCollision = 0.2f;
+            _ThirdPersonFollow.Damping = Vector3.zero;
+            _ThirdPersonFollow.ShoulderOffset = new Vector3(1,0,0);
+            _ThirdPersonFollow.VerticalArmLength = 0;
+            _ThirdPersonFollow.CameraDistance = 1;
+            _ThirdPersonFollow.AvoidObstacles.Enabled = true;
+            _ThirdPersonFollow.AvoidObstacles.DampingFromCollision = 0.2f;
+            _ThirdPersonFollow.AvoidObstacles.DampingIntoCollision = 0.2f;
         }
         public void LookInput(Vector2 lookDelta)
         {
             if (lookDelta.sqrMagnitude >= 0.0001f)
             {
-                cameraCtx.inputYaw += lookDelta.x * m_Config.LookSensitive;
-                cameraCtx.inputPitch += lookDelta.y * m_Config.LookSensitive;
+                CameraCtx.InputYaw += lookDelta.x * _Config.LookSensitive;
+                CameraCtx.InputPitch += lookDelta.y * _Config.LookSensitive;
             }
 
-            cameraCtx.inputYaw = ClampAngle(cameraCtx.inputYaw, float.MinValue, float.MaxValue);
-            cameraCtx.inputPitch = ClampAngle(cameraCtx.inputPitch, m_Config.BottomClamp, m_Config.TopClamp);
+            CameraCtx.InputYaw = ClampAngle(CameraCtx.InputYaw, float.MinValue, float.MaxValue);
+            CameraCtx.InputPitch = ClampAngle(CameraCtx.InputPitch, _Config.BottomClamp, _Config.TopClamp);
 
-            cameraCtx.finalYaw = cameraCtx.inputYaw;
-            cameraCtx.finalPitch = cameraCtx.inputPitch;
+            CameraCtx.FinalYaw = CameraCtx.InputYaw;
+            CameraCtx.FinalPitch = CameraCtx.InputPitch;
         }
         public void StartTransition(ThirdPersonPreset preset, float? duration = null)
         {
-            cameraCtx.targetPreset = preset;
+            CameraCtx.TargetPreset = preset;
 
-            if (m_TransitionCoroutine != null)
-                StopCoroutine(m_TransitionCoroutine);
+            if (_TransitionCoroutine != null)
+                StopCoroutine(_TransitionCoroutine);
 
-            m_TransitionCoroutine = StartCoroutine(TransitionRoutine(duration ?? m_TransitionDuration));
+            _TransitionCoroutine = StartCoroutine(TransitionRoutine(duration ?? _TransitionDuration));
         }
 
         public void AddKick(Vector2 direction, float intensity, float duration)
         {
-            m_Kicks.Add(new CameraKick(direction, intensity, duration));
+            _Kicks.Add(new CameraKick(direction, intensity, duration));
         }
         public void SetMoveSpeed01(float value)
         {
-            cameraCtx.moveSpeed01 = Mathf.Clamp01(value);
+            CameraCtx.MoveSpeed01 = Mathf.Clamp01(value);
         }
         public void SetSway(float intensity, float speed)
         {
-            m_Sway.intensity = intensity;
-            m_Sway.speed = speed;
+            _Sway.intensity = intensity;
+            _Sway.speed = speed;
         }
         public void ClearSway()
         {
-            m_Sway.intensity = 0;
-            m_Sway.speed = 0;
+            _Sway.intensity = 0;
+            _Sway.speed = 0;
         }
         #endregion
 
@@ -159,29 +159,29 @@ namespace Dave6.ThirdPersonCamera
             float invDuration = 1f / duration;
 
             // 시작값 저장
-            float startFOV = m_CinemachineCamera.Lens.FieldOfView;
-            float startSide = m_ThirdPersonFollow.CameraSide;
-            float startDistance = m_ThirdPersonFollow.CameraDistance;
+            float startFOV = _CinemachineCamera.Lens.FieldOfView;
+            float startSide = _ThirdPersonFollow.CameraSide;
+            float startDistance = _ThirdPersonFollow.CameraDistance;
 
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
                 float t = Mathf.Clamp01(elapsed * invDuration);
-                float curveT = m_TransitionCurve.Evaluate(t);
+                float curveT = _TransitionCurve.Evaluate(t);
 
-                m_CinemachineCamera.Lens.FieldOfView = Mathf.LerpUnclamped(startFOV, cameraCtx.targetPreset.fov, curveT);
-                m_ThirdPersonFollow.CameraSide = Mathf.LerpUnclamped(startSide, cameraCtx.targetPreset.sideLength, curveT);
-                m_ThirdPersonFollow.CameraDistance = Mathf.LerpUnclamped(startDistance, cameraCtx.targetPreset.distance, curveT);
+                _CinemachineCamera.Lens.FieldOfView = Mathf.LerpUnclamped(startFOV, CameraCtx.TargetPreset.fov, curveT);
+                _ThirdPersonFollow.CameraSide = Mathf.LerpUnclamped(startSide, CameraCtx.TargetPreset.sideLength, curveT);
+                _ThirdPersonFollow.CameraDistance = Mathf.LerpUnclamped(startDistance, CameraCtx.TargetPreset.distance, curveT);
 
                 yield return null;
             }
 
             // 정확히 목표값으로 마무리 (부동소수점 오차 방지)
-            m_CinemachineCamera.Lens.FieldOfView = cameraCtx.targetPreset.fov;
-            m_ThirdPersonFollow.CameraSide = cameraCtx.targetPreset.sideLength;
-            m_ThirdPersonFollow.CameraDistance = cameraCtx.targetPreset.distance;
+            _CinemachineCamera.Lens.FieldOfView = CameraCtx.TargetPreset.fov;
+            _ThirdPersonFollow.CameraSide = CameraCtx.TargetPreset.sideLength;
+            _ThirdPersonFollow.CameraDistance = CameraCtx.TargetPreset.distance;
 
-            m_TransitionCoroutine = null;
+            _TransitionCoroutine = null;
         }
         float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {

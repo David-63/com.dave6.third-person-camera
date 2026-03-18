@@ -2,22 +2,21 @@ namespace Dave6.ThirdPersonCamera
 {
     public class ThirdPersonCameraContext
     {
-        public float inputYaw;
-        public float inputPitch;
+        public float InputYaw;
+        public float InputPitch;
 
-        public float aimYaw;
-        public float aimPitch;
+        public float AimYaw;
+        public float AimPitch;
 
-        public float finalYaw;
-        public float finalPitch;
+        public float FinalYaw;
+        public float FinalPitch;
 
-        public ThirdPersonPreset targetPreset;
+        public ThirdPersonPreset TargetPreset;
 
-
-        public float kickYaw;
-        public float kickPitch;
-        public float swayYaw;
-        public float swayPitch;
-        public float moveSpeed01;
+        public float KickYaw;
+        public float KickPitch;
+        public float SwayYaw;
+        public float SwayPitch;
+        public float MoveSpeed01;
     }
 }
